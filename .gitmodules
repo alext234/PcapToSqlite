@@ -1,0 +1,15 @@
+[submodule "googletest"]
+	path = googletest
+	url = https://github.com/google/googletest.git
+[submodule "LibPcap"]
+	path = LibPcap
+	url = https://github.com/alext234/LibPcap.git
+[submodule "cppobserver"]
+	path = cppobserver
+	url = https://github.com/alext234/cppobserver.git
+[submodule "cxxopts"]
+	path = cxxopts
+	url = https://github.com/alext234/cxxopts.git
+[submodule "sqlite_modern_cpp"]
+	path = sqlite_modern_cpp
+	url = https://github.com/aminroosta/sqlite_modern_cpp.git
