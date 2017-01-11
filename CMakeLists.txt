@@ -24,7 +24,8 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 # set build type: cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=g++-4.9   ; to see all options of AddressSanitizer, set the environment variable ASAN_OPTIONS=help=1
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g -std=c++1y -Wall -Wextra -Wno-unused-parameter -fsanitize=address")
+#for DEBUG: -p will generate gmon.out which can be read by gprof; to visualize gprof output use tool such as gprof2dot (https://github.com/jrfonseca/gprof2dot)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -p -g -std=c++1y -Wall -Wextra -Wno-unused-parameter -fsanitize=address")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -g -std=c++1y -Wall -Wextra -Wno-unused-parameter")
 
 set(SRC packetdb.cpp )
