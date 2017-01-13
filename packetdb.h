@@ -7,10 +7,14 @@ namespace packetdb {
     class Packet {
     public:
         Packet();
+        Packet(const Packet& packet);
         Packet(const std::vector<uint8_t>& rawData) ;
+        ~Packet() ;
         
         uint16_t len();
         const std::vector<uint8_t>& operator() () ;
+        Packet& operator=(const Packet& packet);
+        uint8_t& operator[] (int i) ;          
     
     private:
         class PacketPrivate;
@@ -19,6 +23,17 @@ namespace packetdb {
     };
 
     class PacketDb {
+    public:
+        PacketDb();
+        ~PacketDb();
+        PacketDb(const PacketDb&) = delete;
+        PacketDb& operator= (const PacketDb&) = delete;
+        
+        void clearAll() ; 
+        
+    private:
+        class PacketDbPrivate;
+        std::shared_ptr<PacketDbPrivate> pp;
         
     };
 }

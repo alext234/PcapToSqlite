@@ -28,7 +28,7 @@ endif(NOT CMAKE_BUILD_TYPE)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -p -g -std=c++1y -Wall -Wextra -Wno-unused-parameter -fsanitize=address")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -g -std=c++1y -Wall -Wextra -Wno-unused-parameter")
 
-set(SRC packetdb.cpp )
+set(SRC packetdb.cpp packetdb_sqlite.cpp)
 
 add_executable(runtests tests.cpp tests_packetdb.cpp ${SRC})
 set(SAMPLE_PCAP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/examples/)
