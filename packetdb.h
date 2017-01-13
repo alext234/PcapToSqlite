@@ -10,6 +10,7 @@ namespace packetdb {
         Packet(const std::vector<uint8_t>& rawData) ;
         
         uint16_t len();
+        const std::vector<uint8_t>& operator() () ;
     
     private:
         class PacketPrivate;

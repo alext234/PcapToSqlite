@@ -16,14 +16,18 @@ TEST(Packets, CreatePacket) {
         
         Packet packet({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20});
         ASSERT_THAT (packet.len(), Eq(21));
-        // TODO: verify the content of the packet
+        auto data = packet();
+        ASSERT_THAT(equal(data.begin(), data.end(), vector<uint8_t>{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}.begin()), Eq(true));
+        
     }
     {
         vector<uint8_t> d(1024);
         iota(d.begin(), d.end(), 1);
         Packet packet (d);
         ASSERT_THAT (packet.len(), Eq(d.size()));
-        // TODO: verify the content of the packet
+        
+        auto data = packet();
+        ASSERT_THAT(equal(data.begin(), data.end(), d.begin()), Eq(true));
         
     }
     

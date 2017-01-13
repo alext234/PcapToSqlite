@@ -18,6 +18,9 @@ namespace packetdb {
         pp->data=move(rawData);
     }
     
+    const vector<uint8_t>& Packet::operator() () {
+        return pp->data;
+    }
     
     uint16_t Packet::len() {
         return pp->data.size();
