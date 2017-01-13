@@ -5,7 +5,7 @@
 namespace packetdb {
 
     class Packet {
-    public:
+    public:        
         Packet();
         Packet(const Packet& packet);
         Packet(const std::vector<uint8_t>& rawData) ;
@@ -29,7 +29,7 @@ namespace packetdb {
         PacketDb()=delete;
         PacketDb(const PacketDb&) = delete;
         PacketDb& operator= (const PacketDb&) = delete;
-        
+        void insert (const Packet& packet);
         
         void clearAll() ; 
         

@@ -35,7 +35,7 @@ TEST(Packets, CreatePacket) {
 
 }
 
-// TODO: test packet copy  (copy constructor and = operator); packet move 
+
 TEST(Packets, CopyPacket) {
     {
         vector<uint8_t> d(1024);
@@ -87,6 +87,12 @@ TEST(Packets, CopyPacket) {
     
 }
 
+TEST(Packets, getMacAddresses) {
+    // TODO: generate 0 size packet  --> get mac address should have exception
+    
+    // TODO: get actual packet from 1.pcap --> verify the extracted mac address
+}
+
 TEST(PacketDb, clearAll) {
     PacketDb db("packets.db");
     db.clearAll(); // clear all tables
@@ -98,9 +104,12 @@ TEST(PacketDb, insertAndRetrieve) {
     iota(d.begin(), d.end(), 1);
     Packet packet (d);
     
+    PacketDb db("packets.db");        
+    db.insert (packet);
+    // TODO: retrieve and verify
 
     
     
-    // TODO: Packet class which allow initializing packets from raw data; store packet into db, read out to verify
+    
 
 }
