@@ -24,10 +24,12 @@ namespace packetdb {
 
     class PacketDb {
     public:
-        PacketDb();
+        PacketDb(std::string dbFile);
         ~PacketDb();
+        PacketDb()=delete;
         PacketDb(const PacketDb&) = delete;
         PacketDb& operator= (const PacketDb&) = delete;
+        
         
         void clearAll() ; 
         

@@ -88,9 +88,9 @@ TEST(Packets, CopyPacket) {
 }
 
 TEST(PacketDb, clearAll) {
-    PacketDb db;    
+    PacketDb db("packets.db");
     db.clearAll(); // clear all tables
-    // TODO: verify if all are cleared
+    
 }
 
 TEST(PacketDb, insertAndRetrieve) {
@@ -101,6 +101,6 @@ TEST(PacketDb, insertAndRetrieve) {
 
     
     
-    // TODO: make namespace packetdb; Packet class which allow initializing packets from raw data; store packet into db, read out to verify
+    // TODO: Packet class which allow initializing packets from raw data; store packet into db, read out to verify
 
 }
