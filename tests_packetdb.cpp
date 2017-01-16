@@ -135,14 +135,18 @@ TEST(PacketDb, clearAll) {
     
 }
 
+
 TEST(PacketDb, insertAndRetrieve) {
-    vector<uint8_t> d(1024);
-    iota(d.begin(), d.end(), 1);
-    Packet packet (d);
+
     
     PacketDb db("packets.db");        
-    db.insert (packet);
-    // TODO: retrieve and verify
+    {
+        vector<uint8_t> d(1024);
+        iota(d.begin(), d.end(), 1);
+        Packet packet (d);
+        auto insertedRowId = db.insert (packet); // TODO: should return id??
+        // TODO: retrieve and verify
+    }
 
     
     

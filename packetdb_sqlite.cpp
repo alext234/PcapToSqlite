@@ -44,8 +44,14 @@ namespace packetdb {
         // recreate
         pp->createTables();
     }
+    
+    long long PacketDb::insert (const Packet& packet){
+        
+        MacType srcMac = packet.getSrcMac();
+        MacType dstMac = packet.getDstMac();
+        
 
-    void PacketDb::insert (const Packet& packet){
-        // TODO: get packet mac src and dst??        
+        //*pp->db << "insert into packets(srcmac, dstmac, rawdata) values(?,?,?)"<< TODO <<TODO <<packet();
+        return pp->db-> last_insert_rowid();
     };
 }

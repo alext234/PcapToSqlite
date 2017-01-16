@@ -6,16 +6,20 @@
 namespace packetdb {
 
     
-    class PacketException: public std::exception {
+    class Exception: public std::exception {
     public:
-        PacketException(std::string r): _reason(r) {}
+        Exception(std::string r): _reason(r) {}
         const char* what() const noexcept {
             return _reason.c_str();
         }
         private:
         std::string _reason;
     };
-
+    
+    class PacketException: public Exception {  using Exception::Exception;  };
+    class UtilityException: public Exception { using Exception::Exception;   };    
+    
+    
     using MacType= std::array<uint8_t,6>;
     
     class Packet {
@@ -25,13 +29,13 @@ namespace packetdb {
         Packet(const std::vector<uint8_t>& rawData) ;
         ~Packet() ;
         
-        uint16_t len();
-        const std::vector<uint8_t>& operator() () ;
+        uint16_t len() const ;
+        const std::vector<uint8_t>& operator() () const ;
         Packet& operator=(const Packet& packet);
         uint8_t& operator[] (int i) ;          
         
-        MacType getSrcMac();
-        MacType getDstMac();
+        MacType getSrcMac() const;
+        MacType getDstMac() const;
         
     private:
         class PacketPrivate;
@@ -45,8 +49,8 @@ namespace packetdb {
         ~PacketDb();
         PacketDb()=delete;
         PacketDb(const PacketDb&) = delete;
-        PacketDb& operator= (const PacketDb&) = delete;
-        void insert (const Packet& packet);
+        PacketDb& operator= (const PacketDb&) = delete;        
+        long long insert (const Packet& packet);
         
         void clearAll() ; 
         
@@ -55,5 +59,8 @@ namespace packetdb {
         std::shared_ptr<PacketDbPrivate> pp;
         
     };
+    
+    std::string macTypeToString (MacType mac);
+    MacType stringToMacType (std::string  mac);
 }
 #endif //__PACKET_DB__
