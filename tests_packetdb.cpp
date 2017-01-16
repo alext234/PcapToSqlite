@@ -2,6 +2,10 @@
 #include "packetdb.h"
 #include <cstdint>
 #include <numeric>
+#include "cpppcap.h"
+#include "cpp_observer.h"
+
+
 using namespace testing;
 using namespace std;
 using namespace packetdb;
@@ -88,9 +92,41 @@ TEST(Packets, CopyPacket) {
 }
 
 TEST(Packets, getMacAddresses) {
-    // TODO: generate 0 size packet  --> get mac address should have exception
     
-    // TODO: get actual packet from 1.pcap --> verify the extracted mac address
+    {
+        Packet packet; 
+        try {
+            auto srcMac = packet.getSrcMac();
+            auto dstMac = packet.getDstMac();
+            ASSERT_THAT(0, Eq(1));//  should not reach here
+        } catch (const PacketException& ex) {
+            
+        }
+        
+        
+        
+    }
+
+    
+    {
+        std::string pcapFile{SAMPLE_PCAP_DIR};
+        pcapFile+="1.pcap";
+        
+    
+        auto dev = Pcap::openOffline(pcapFile);
+        // register observer 
+        dev->registerObserver([](const Pcap::Packet& p){
+            packetdb::Packet packet (p.data());
+            MacType dstMac = packet.getDstMac();            
+            ASSERT_THAT(dstMac, Eq(MacType{0xbc, 0xdf, 0x20, 0x00, 0x01, 0x00}));
+            MacType srcMac = packet.getSrcMac();
+            ASSERT_THAT(srcMac, Eq(MacType{0x00, 0x00, 0x01, 0x00, 0x00, 0x00}));
+        });
+
+    
+        dev->loop();        
+    }
+    
 }
 
 TEST(PacketDb, clearAll) {

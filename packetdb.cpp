@@ -29,6 +29,7 @@ namespace packetdb {
     {
         pp->data=move(rawData);
     }
+       
     Packet::~Packet() {}
     
     const vector<uint8_t>& Packet::operator() () {
@@ -43,6 +44,19 @@ namespace packetdb {
         return pp->data[i];
     }
     
+    MacType Packet::getSrcMac() {
+        if (len()<12) throw PacketException("Packet does not have source MAC address");;
+        auto d = pp->data;
+        return MacType{d[6],d[7],d[8],d[9],d[10],d[11]};
+    }
+    
+    MacType Packet::getDstMac() {
+        if (len()<6) throw PacketException("Packet does not have destionation MAC address");;
+        auto d = pp->data;
+        return MacType{d[0],d[1],d[2],d[3],d[4],d[5]};
+        
+    }
+
  
 
 }
