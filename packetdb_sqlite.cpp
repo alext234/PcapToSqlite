@@ -55,4 +55,11 @@ namespace packetdb {
         *pp->db << "insert into packets(srcmac, dstmac, rawdata) values(?,?,?)"<< macTypeToString(srcMac)<<macTypeToString(dstMac)<<packet();
         return pp->db-> last_insert_rowid();
     };
+    
+    Packet PacketDb::retrievePacketById(long long _id) {
+        vector<uint8_t> rawData;
+        
+        *pp->db <<"select rawData from packets where _id=?"<<_id>> rawData; // exception no_rows might be thrown here
+        return Packet(rawData);
+    }
 }

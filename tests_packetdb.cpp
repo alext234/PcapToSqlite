@@ -97,8 +97,10 @@ TEST(Packets, getMacAddresses) {
         Packet packet; 
         try {
             auto srcMac = packet.getSrcMac();
-            auto dstMac = packet.getDstMac();
+            auto dstMac = packet.getDstMac();            
             ASSERT_THAT(0, Eq(1));//  should not reach here
+            srcMac = MacType{0}; // meaningless assignemt to avoid compiler warning
+            dstMac= MacType{0};// meaningless assignemt to avoid compiler warning
         } catch (const PacketException& ex) {
             
         }
@@ -144,11 +146,26 @@ TEST(PacketDb, insertAndRetrieve) {
         vector<uint8_t> d(1024);
         iota(d.begin(), d.end(), 1);
         Packet packet (d);
-        auto insertedRowId = db.insert (packet); // TODO: should return id??
-        // TODO: retrieve and verify
+        auto insertedRowId = db.insert (packet);
+        
+        //  retrieve and verify
+        
+        Packet retrievedPacket = db.retrievePacketById(insertedRowId );
+        ASSERT_THAT (retrievedPacket(), Eq(d));
+        
     }
 
-    
+    {
+        // retrieve nonexistent packet
+        db.clearAll(); // clear all tables
+        try {
+            Packet retrievedPacket = db.retrievePacketById(1 );
+            ASSERT_THAT(0, Eq(1));//  should not reach here
+        } catch (const exception& ex) {
+        }
+        
+    }
+       
     
     
 

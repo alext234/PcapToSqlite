@@ -51,7 +51,7 @@ namespace packetdb {
         PacketDb(const PacketDb&) = delete;
         PacketDb& operator= (const PacketDb&) = delete;        
         long long insert (const Packet& packet);
-        
+        Packet retrievePacketById(long long _id);
         void clearAll() ; 
         
     private:
