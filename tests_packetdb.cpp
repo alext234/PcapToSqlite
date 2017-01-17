@@ -9,6 +9,7 @@
 using namespace testing;
 using namespace std;
 using namespace packetdb;
+const string  TEST_DB ="packets_testdb.db";
 
 TEST(Packets, CreatePacket) {
     {
@@ -132,7 +133,7 @@ TEST(Packets, getMacAddresses) {
 }
 
 TEST(PacketDb, clearAll) {
-    PacketDb db("packets.db");
+    PacketDb db(TEST_DB);
     db.clearAll(); // clear all tables
     
 }
@@ -141,7 +142,7 @@ TEST(PacketDb, clearAll) {
 TEST(PacketDb, insertAndRetrieve) {
 
     
-    PacketDb db("packets.db");        
+    PacketDb db(TEST_DB);        
     {
         vector<uint8_t> d(1024);
         iota(d.begin(), d.end(), 1);
@@ -165,8 +166,37 @@ TEST(PacketDb, insertAndRetrieve) {
         }
         
     }
-       
-    
-    
 
+}
+
+
+TEST(PacketDb, insertAndRetrieveMultiple) {
+        std::string pcapFile{SAMPLE_PCAP_DIR};
+        pcapFile+="2.pcap";
+        
+    
+        map<long long, vector<uint8_t>> m;
+        
+        auto dev = Pcap::openOffline(pcapFile);
+        
+        PacketDb db(TEST_DB);        
+        // register observer 
+        dev->registerObserver([&m,&db](const Pcap::Packet& p){
+            packetdb::Packet packet (p.data());
+            auto _id = db.insert (p.data());
+            m[_id ]= p.data();
+        });
+
+    
+        dev->loop();       
+        
+        for(auto it = m.begin(); it != m.end(); ++it) {
+            auto _id = it->first;
+            auto rawData = it->second;
+            
+            Packet retrievedPacket = db.retrievePacketById(_id );
+            ASSERT_THAT (retrievedPacket(), Eq(rawData));
+            
+        }
+    
 }
