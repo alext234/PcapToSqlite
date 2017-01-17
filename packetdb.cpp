@@ -63,10 +63,10 @@ namespace packetdb {
         
     std::string macTypeToString (MacType mac) {
         ostringstream ss;
-        ss<<setfill('0')<<setw(2)<<uppercase;
+        
         for (auto it =mac.cbegin(); it!=mac.cend(); ++it) {
            if (it!=mac.cbegin()) ss<<":";
-           ss<<hex<<int(*it);
+           ss<<setfill('0')<<setw(2)<<uppercase<<hex<<int(*it);
         }
         return ss.str();
     }

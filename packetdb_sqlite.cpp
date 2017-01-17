@@ -50,8 +50,9 @@ namespace packetdb {
         MacType srcMac = packet.getSrcMac();
         MacType dstMac = packet.getDstMac();
         
-
-        //*pp->db << "insert into packets(srcmac, dstmac, rawdata) values(?,?,?)"<< TODO <<TODO <<packet();
+        
+        
+        *pp->db << "insert into packets(srcmac, dstmac, rawdata) values(?,?,?)"<< macTypeToString(srcMac)<<macTypeToString(dstMac)<<packet();
         return pp->db-> last_insert_rowid();
     };
 }
