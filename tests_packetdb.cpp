@@ -2,6 +2,10 @@
 #include "packetdb.h"
 #include <cstdint>
 #include <numeric>
+#include "cpppcap.h"
+#include "cpp_observer.h"
+
+
 using namespace testing;
 using namespace std;
 using namespace packetdb;
@@ -35,7 +39,7 @@ TEST(Packets, CreatePacket) {
 
 }
 
-// TODO: test packet copy  (copy constructor and = operator); packet move 
+
 TEST(Packets, CopyPacket) {
     {
         vector<uint8_t> d(1024);
@@ -87,20 +91,82 @@ TEST(Packets, CopyPacket) {
     
 }
 
-TEST(PacketDb, clearAll) {
-    PacketDb db;    
-    db.clearAll(); // clear all tables
-    // TODO: verify if all are cleared
+TEST(Packets, getMacAddresses) {
+    
+    {
+        Packet packet; 
+        try {
+            auto srcMac = packet.getSrcMac();
+            auto dstMac = packet.getDstMac();            
+            ASSERT_THAT(0, Eq(1));//  should not reach here
+            srcMac = MacType{0}; // meaningless assignemt to avoid compiler warning
+            dstMac= MacType{0};// meaningless assignemt to avoid compiler warning
+        } catch (const PacketException& ex) {
+            
+        }
+        
+        
+        
+    }
+
+    
+    {
+        std::string pcapFile{SAMPLE_PCAP_DIR};
+        pcapFile+="1.pcap";
+        
+    
+        auto dev = Pcap::openOffline(pcapFile);
+        // register observer 
+        dev->registerObserver([](const Pcap::Packet& p){
+            packetdb::Packet packet (p.data());
+            MacType dstMac = packet.getDstMac();            
+            ASSERT_THAT(dstMac, Eq(MacType{0xbc, 0xdf, 0x20, 0x00, 0x01, 0x00}));
+            MacType srcMac = packet.getSrcMac();
+            ASSERT_THAT(srcMac, Eq(MacType{0x00, 0x00, 0x01, 0x00, 0x00, 0x00}));
+        });
+
+    
+        dev->loop();        
+    }
+    
 }
 
-TEST(PacketDb, insertAndRetrieve) {
-    vector<uint8_t> d(1024);
-    iota(d.begin(), d.end(), 1);
-    Packet packet (d);
+TEST(PacketDb, clearAll) {
+    PacketDb db("packets.db");
+    db.clearAll(); // clear all tables
     
+}
+
+
+TEST(PacketDb, insertAndRetrieve) {
 
     
+    PacketDb db("packets.db");        
+    {
+        vector<uint8_t> d(1024);
+        iota(d.begin(), d.end(), 1);
+        Packet packet (d);
+        auto insertedRowId = db.insert (packet);
+        
+        //  retrieve and verify
+        
+        Packet retrievedPacket = db.retrievePacketById(insertedRowId );
+        ASSERT_THAT (retrievedPacket(), Eq(d));
+        
+    }
+
+    {
+        // retrieve nonexistent packet
+        db.clearAll(); // clear all tables
+        try {
+            Packet retrievedPacket = db.retrievePacketById(1 );
+            ASSERT_THAT(0, Eq(1));//  should not reach here
+        } catch (const exception& ex) {
+        }
+        
+    }
+       
     
-    // TODO: make namespace packetdb; Packet class which allow initializing packets from raw data; store packet into db, read out to verify
+    
 
 }

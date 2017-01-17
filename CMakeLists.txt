@@ -30,7 +30,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -g -std=c++1y -Wall -Wextra -Wno
 
 set(SRC packetdb.cpp packetdb_sqlite.cpp)
 
-add_executable(runtests tests.cpp tests_packetdb.cpp ${SRC})
+add_executable(runtests tests.cpp tests_packetdb.cpp tests_utility.cpp ${SRC})
 set(SAMPLE_PCAP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/examples/)
 set_target_properties(runtests PROPERTIES COMPILE_FLAGS -D'SAMPLE_PCAP_DIR="${SAMPLE_PCAP_DIR}"')
 target_link_libraries(runtests gmock)
