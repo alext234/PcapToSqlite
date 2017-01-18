@@ -56,10 +56,18 @@ namespace packetdb {
         return pp->db-> last_insert_rowid();
     };
     
-    Packet PacketDb::retrievePacketById(long long _id) {
-        vector<uint8_t> rawData;
+    Packet PacketDb::retrievePacketById(long long _id, uint16_t offset, int16_t n) {
+        vector<uint8_t> rawData;        
+        // select substr(rawdata,2,10) from packets;
+        offset +=1; // sqlite offset starts from 1, not 0
+        if (n==-1) {
+            *pp->db <<"select substr(rawdata,?) from packets where _id=?"<< (int)offset<< _id  >> rawData;     
+        } else {
+            *pp->db <<"select substr(rawdata,?,?) from packets where _id=?"<< (int)offset << (int)n << _id  >> rawData;     
+        }
+            
         
-        *pp->db <<"select rawData from packets where _id=?"<<_id>> rawData; // exception no_rows might be thrown here
+        
         return Packet(rawData);
     }
 }

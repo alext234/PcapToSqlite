@@ -51,7 +51,9 @@ namespace packetdb {
         PacketDb(const PacketDb&) = delete;
         PacketDb& operator= (const PacketDb&) = delete;        
         long long insert (const Packet& packet);
-        Packet retrievePacketById(long long _id);
+        
+        // offset: starting from 0; n: number of bytes (-1= all till the end)
+        Packet retrievePacketById(long long _id, uint16_t offset=0, int16_t n=-1);
         void clearAll() ; 
         
     private:
