@@ -166,7 +166,22 @@ TEST(PacketDb, insertAndRetrieve) {
         }
         
     }
-
+    {
+        // retrieve sub packet with specified len
+        vector<uint8_t> d(1024);
+        iota(d.begin(), d.end(), 1);
+        Packet packet (d);
+        auto insertedRowId = db.insert (packet);
+        
+        //  retrieve and verify
+        
+        Packet retrievedPacket = db.retrievePacketById(insertedRowId,6, 20 );        
+        auto pd = retrievedPacket ();
+        
+        ASSERT_THAT (equal(pd.cbegin(), pd.cend(), d.cbegin()+6, d.cbegin()+26), Eq(true));
+        
+    }
+    
 }
 
 
