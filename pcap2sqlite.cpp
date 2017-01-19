@@ -6,7 +6,26 @@
 
 using namespace std;
 
-
+shared_ptr<Pcap::Dev> getDev(string input) {
+    if (input=="") {
+        
+        // get default interface
+        return  Pcap::lookUpDev();  
+        
+    } else {
+        auto dotPos = input.find_last_of('.');
+   
+        if (dotPos ==  string::npos) { 
+            // not a pcap file, sshould be an interface
+            // TODO: lib PCAP does not have an API for openLive() yet
+        } else {
+            
+            // pcap file; open offile
+            return Pcap::openOffline (input);
+        }
+    }
+    return nullptr;
+}
 /* 
 * command line arguments: 
 * -i input interface or .pcap file (optional, default is the first interface detected)
@@ -36,4 +55,31 @@ int main (int argc, char* argv[])
     cout << "input : " << (input==""?"default interface":input)<<endl;
     cout << "database : " << dbfile<<endl;
     
+    auto dev = getDev (input);
+    if (dev==nullptr) {        
+        exit(1);
+    }
+    packetdb::PacketDb db(dbfile);
+    struct Stat {
+        uint64_t packetCount=0;
+    } stat;
+    dev->registerObserver([&stat,&db](const Pcap::Packet& p){
+        stat.packetCount+=1;
+        cout <<"\r"<<"packets count : "<< stat.packetCount<<flush;        
+        packetdb::Packet packet (p.data());
+        
+
+        db.insert (packet);
+        
+        
+        
+        
+    });
+    
+    dev->loop();
+    
+    
+    cout <<endl;
+    // TODO: catch ctrl+c and breakloop
+
 }
