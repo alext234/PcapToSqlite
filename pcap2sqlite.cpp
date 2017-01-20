@@ -50,7 +50,7 @@ int main (int argc, char* argv[])
     options.add_options()
         ("h,help", "display this help");
 
-    options.add_option ("","i", "input", "pcap file (.cap, .pcap), .lst storing list of pcap files, or network interface", cxxopts::value<string> (input),"",  false);
+    options.add_option ("","i", "input", "pcap file (.cap, .pcap), or network interface", cxxopts::value<string> (input),"",  false);
     options.add_option ("", "o", "database", "sqlite database file", cxxopts::value<string>(dbfile), "", false)  ;
 
 
