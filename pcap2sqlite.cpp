@@ -3,8 +3,11 @@
 #include <string>
 #include <cpppcap.h>
 #include "packetdb.h"
+#include <csignal>
+
 
 using namespace std;
+shared_ptr<Pcap::Dev> dev; // global variable so it can be accessed from sigIntHandler
 
 shared_ptr<Pcap::Dev> getDev(string input) {
     if (input=="") {
@@ -26,6 +29,13 @@ shared_ptr<Pcap::Dev> getDev(string input) {
     }
     return nullptr;
 }
+
+void sigIntHandler( int signum ) {
+    cout <<endl;
+    cout << "stopping..." <<endl;
+    dev->breakLoop();
+}
+
 /* 
 * command line arguments: 
 * -i input interface or .pcap file (optional, default is the first interface detected)
@@ -55,7 +65,8 @@ int main (int argc, char* argv[])
     cout << "input : " << (input==""?"default interface":input)<<endl;
     cout << "database : " << dbfile<<endl;
     
-    auto dev = getDev (input);
+    dev = getDev (input);
+    
     if (dev==nullptr) {        
         exit(1);
     }
@@ -63,7 +74,7 @@ int main (int argc, char* argv[])
     struct Stat {
         uint64_t packetCount=0;
     } stat;
-    dev->registerObserver([&stat,&db,&dev](const Pcap::Packet& p){
+    dev->registerObserver([&stat,&db](const Pcap::Packet& p){
         packetdb::Packet packet (p.data());
         
         db.insert (packet);        
@@ -77,10 +88,11 @@ int main (int argc, char* argv[])
         
     });
     
+    signal(SIGINT, sigIntHandler);  
+
     dev->loop();
-    
-    
+        
     cout <<endl;
-    // TODO: catch ctrl+c and breakloop for the case of livecapture
+    
 
 }
