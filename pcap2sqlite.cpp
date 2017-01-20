@@ -17,7 +17,7 @@ shared_ptr<Pcap::Dev> getDev(string input) {
    
         if (dotPos ==  string::npos) { 
             // not a pcap file, sshould be an interface
-            // TODO: lib PCAP does not have an API for openLive() yet
+            return Pcap::openLive(input);
         } else {
             
             // pcap file; open offile
@@ -63,16 +63,17 @@ int main (int argc, char* argv[])
     struct Stat {
         uint64_t packetCount=0;
     } stat;
-    dev->registerObserver([&stat,&db](const Pcap::Packet& p){
-        stat.packetCount+=1;
-        cout <<"\r"<<"packets count : "<< stat.packetCount<<flush;        
+    dev->registerObserver([&stat,&db,&dev](const Pcap::Packet& p){
         packetdb::Packet packet (p.data());
         
-
-        db.insert (packet);
+        db.insert (packet);        
         
-        
-        
+        auto stat = dev -> getStats();
+        cout << "\r";
+        cout << "  received : "<< stat.recv;
+        cout << "  dropped: "<< stat.drop;
+        cout << "  ifdropped: "<< stat.ifdrop;
+        cout <<flush        ;
         
     });
     
@@ -80,6 +81,6 @@ int main (int argc, char* argv[])
     
     
     cout <<endl;
-    // TODO: catch ctrl+c and breakloop
+    // TODO: catch ctrl+c and breakloop for the case of livecapture
 
 }
