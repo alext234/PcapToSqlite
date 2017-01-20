@@ -34,7 +34,7 @@ TEST(MacTypeAndStringConversion,StringToMacType) {
     }
     {
         try {
-            MacType mac  = stringToMacType("11:22:33:AA:BB:CC:EE:FF"); // an invalid one 
+            stringToMacType("11:22:33:AA:BB:CC:EE:FF"); // an invalid one --> see exception
             ASSERT_THAT(1,Eq(0)); // should not reach here 
         } catch (const UtilityException& ex) {
         }

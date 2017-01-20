@@ -17,6 +17,7 @@ namespace packetdb {
     };
     
     class PacketException: public Exception {  using Exception::Exception;  };
+    class PacketDbException: public Exception {  using Exception::Exception;  };
     class UtilityException: public Exception { using Exception::Exception;   };    
     
     

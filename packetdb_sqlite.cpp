@@ -33,7 +33,9 @@ namespace packetdb {
         shared_ptr<database> db;
     };
     
-    PacketDb::PacketDb(string dbFile) : pp(make_shared<PacketDbPrivate>(dbFile))  { }
+    PacketDb::PacketDb(string dbFile) : pp(make_shared<PacketDbPrivate>(dbFile))  { 
+        pp->createTables();
+    }
     PacketDb::~PacketDb(){}
     
     
@@ -49,11 +51,21 @@ namespace packetdb {
         
         MacType srcMac = packet.getSrcMac();
         MacType dstMac = packet.getDstMac();
-        
-        
-        
-        *pp->db << "insert into packets(srcmac, dstmac, rawdata) values(?,?,?)"<< macTypeToString(srcMac)<<macTypeToString(dstMac)<<packet();
-        return pp->db-> last_insert_rowid();
+                        
+        uint16_t retries = 100;
+        while (retries >0 ) {
+            try {
+                *pp->db << "insert into packets(srcmac, dstmac, rawdata) values(?,?,?)"<< macTypeToString(srcMac)<<macTypeToString(dstMac)<<packet();            
+                
+            } catch (const sqlite::exceptions::locked& ex) {
+                --retries;
+            } catch (const sqlite::exceptions::busy& ex) {
+                --retries;
+            }
+            return pp->db-> last_insert_rowid();
+        }
+        throw PacketDbException("Unable to insert. database seems to locked for long time");
+         
     };
     
     Packet PacketDb::retrievePacketById(long long _id, uint16_t offset, int16_t n) {
